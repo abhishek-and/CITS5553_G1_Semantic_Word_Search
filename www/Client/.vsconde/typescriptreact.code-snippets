@@ -1,0 +1,29 @@
+{
+  //#region  //*=========== Commons ===========
+  "Region": {
+    "prefix": "reg",
+    "scope": "javascript, typescript, javascriptreact, typescriptreact",
+    "body": [
+      "//#region  //*=========== ${1} ===========",
+      "${TM_SELECTED_TEXT}$0",
+      "//#endregion  //*======== ${1} ==========="
+    ]
+  },
+  "Region CSS": {
+    "prefix": "regc",
+    "scope": "css, scss",
+    "body": [
+      "/* #region  /**=========== ${1} =========== */",
+      "${TM_SELECTED_TEXT}$0",
+      "/* #endregion  /**======== ${1} =========== */"
+    ]
+  },
+  //#endregion  //*======== Commons ===========
+
+  //#region  //*=========== Snippet Wrap ===========
+  "Wrap with Fragment": {
+    "prefix": "ff",
+    "body": ["<${1}>", "\t${TM_SELECTED_TEXT}", "</${1}>"]
+  }
+  //#endregion  //*======== Snippet Wrap ===========
+}
