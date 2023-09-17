@@ -17,7 +17,7 @@ class documentsJSON(BaseModel):
     documentID: str
     similarityScore: str
 
-@app.post("/api/getFilters")
+@app.get("/api/getFilters")
 def get_filters(user_query: str):
     return filterJSON(
         query=user_query,
