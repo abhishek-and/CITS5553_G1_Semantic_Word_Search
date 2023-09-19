@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Data from "./mock-data.json";
 import { useState } from "react";
-
+import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
@@ -50,15 +50,16 @@ export default function Home() {
   const [docs, setDocs] = useState(docsData);
   const [filters, setFilters] = useState({});
   const [documents, setDocuemnts] = useState({});
+  const [values, setValue] = useState<any>();
 
   const { mutateAsync: mutateFilters, isSuccess: isSuccessFilters } =
     useMutationFilters({
-      onSuccess: (data) => console.log(data),
-      onError: (error) => console.error(error),
+      onSuccess: (data: any) => console.log(data),
+      onError: (error: any) => console.error(error),
     });
   const { mutateAsync: mutateDocuments } = useMutationDocuments({
-    onSuccess: (data) => console.log(data),
-    onError: (error) => console.error(error),
+    onSuccess: (data: any) => console.log(data),
+    onError: (error: any) => console.error(error),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -75,11 +76,19 @@ export default function Home() {
     const filtersTemp = await mutateFilters(values.query);
     const documentsTemp = await mutateDocuments(filtersTemp);
     setFilters(filtersTemp);
-    setDocuemnts(documentsTemp);
-    const results = Data.filter((item) =>
-      item.title.toLowerCase().includes(values.query.toLowerCase()),
-    );
-    setDocs(results);
+    setDocuemnts(documentsTemp.documents);
+    setValue(documentsTemp.documents);
+    console.log(documentsTemp.documents);
+    // const results = Data.filter((item) =>
+    //   item.title.toLowerCase().includes(values.query.toLowerCase()),
+    // );
+    // setDocs(results);
+  };
+
+  console.log(values);
+
+  const clearList = () => {
+    setValue([]);
   };
 
   return (
@@ -113,6 +122,14 @@ export default function Home() {
                   </FormItem>
                 )}
               />
+              <Image
+                src="/static/assets/close_btn.svg"
+                alt="ITC logo"
+                width={40}
+                height={40}
+                className="absolute  right-[70px] top-8"
+                onClick={() => clearList()}
+              />
               <Button
                 className="absolute right-0 top-8 h-10 w-16 rounded-full rounded-l-none bg-blue-500 text-white"
                 type="submit"
@@ -121,33 +138,33 @@ export default function Home() {
               </Button>
             </form>
           </Form>
-          <div>
+          {/* <div>
             <pre>{JSON.stringify(filters, null, 2)}</pre>
           </div>
           <div>
             <pre>{JSON.stringify(documents, null, 2)}</pre>
-          </div>
-          <div className="flex w-full max-w-3xl flex-col gap-4">
-            {docs.length > 0 &&
-              docs.map((doc) => (
+          </div> */}
+          <div className="flex h-screen w-full max-w-3xl flex-col gap-4">
+            {values?.length > 0 &&
+              values.map((doc: any) => (
                 <Card
                   key={doc.id}
                   className="transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
                 >
                   <CardHeader>
-                    <CardTitle>{doc.title}</CardTitle>
+                    <CardTitle>{doc.documentName}</CardTitle>
                     {/* <CardDescription>Card Description</CardDescription> */}
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600">
-                      Reference #: {doc["Reference #"]}
+                      Document ID #: {doc.documentID}
                     </p>
                     <p className="text-sm text-gray-600">
-                      Close Date: {doc["Close Date"]}
+                      Similarity Score: {doc.similarityScore}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    {/* <p className="text-sm text-gray-600">
                       UNSPSC Code: {doc["UNSPSC Code"]}
-                    </p>
+                    </p> */}
                   </CardContent>
                   {/* <CardFooter>
                     <p>Card Footer</p>
