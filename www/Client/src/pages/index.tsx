@@ -25,6 +25,8 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import useMutationFilters from "~/hooks/filter";
+import useMutationDocuments from "~/hooks/document";
 
 const formSchema = z.object({
   query: z.string().min(0, {
@@ -42,10 +44,22 @@ const mockDataSchema = z.object({
 
 const mockDataArraySchema = z.array(mockDataSchema);
 
-const data = mockDataArraySchema.parse(Data);
+const docsData = mockDataArraySchema.parse(Data);
 
 export default function Home() {
-  const [query, setQuery] = useState(data);
+  const [docs, setDocs] = useState(docsData);
+  const [filters, setFilters] = useState({});
+  const [documents, setDocuemnts] = useState({});
+
+  const { mutateAsync: mutateFilters, isSuccess: isSuccessFilters } =
+    useMutationFilters({
+      onSuccess: (data) => console.log(data),
+      onError: (error) => console.error(error),
+    });
+  const { mutateAsync: mutateDocuments } = useMutationDocuments({
+    onSuccess: (data) => console.log(data),
+    onError: (error) => console.error(error),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,14 +69,18 @@ export default function Home() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    const filtersTemp = await mutateFilters(values.query);
+    const documentsTemp = await mutateDocuments(filtersTemp);
+    setFilters(filtersTemp);
+    setDocuemnts(documentsTemp);
     const results = Data.filter((item) =>
       item.title.toLowerCase().includes(values.query.toLowerCase()),
     );
-    setQuery(results);
-  }
+    setDocs(results);
+  };
 
   return (
     <>
@@ -103,26 +121,32 @@ export default function Home() {
               </Button>
             </form>
           </Form>
+          <div>
+            <pre>{JSON.stringify(filters, null, 2)}</pre>
+          </div>
+          <div>
+            <pre>{JSON.stringify(documents, null, 2)}</pre>
+          </div>
           <div className="flex w-full max-w-3xl flex-col gap-4">
-            {query.length > 0 &&
-              query.map((post) => (
+            {docs.length > 0 &&
+              docs.map((doc) => (
                 <Card
-                  key={post.id}
+                  key={doc.id}
                   className="transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
                 >
                   <CardHeader>
-                    <CardTitle>{post.title}</CardTitle>
+                    <CardTitle>{doc.title}</CardTitle>
                     {/* <CardDescription>Card Description</CardDescription> */}
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600">
-                      Reference #: {post["Reference #"]}
+                      Reference #: {doc["Reference #"]}
                     </p>
                     <p className="text-sm text-gray-600">
-                      Close Date: {post["Close Date"]}
+                      Close Date: {doc["Close Date"]}
                     </p>
                     <p className="text-sm text-gray-600">
-                      UNSPSC Code: {post["UNSPSC Code"]}
+                      UNSPSC Code: {doc["UNSPSC Code"]}
                     </p>
                   </CardContent>
                   {/* <CardFooter>
