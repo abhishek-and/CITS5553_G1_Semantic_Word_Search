@@ -48,16 +48,15 @@ const docsData = mockDataArraySchema.parse(Data);
 
 export default function Home() {
   const [docs, setDocs] = useState(docsData);
+  const [filters, setFilters] = useState({});
+  const [documents, setDocuemnts] = useState({});
 
-  const {
-    data: filters,
-    mutate: mutateFilters,
-    isSuccess: isSuccessFilters,
-  } = useMutationFilters({
-    onSuccess: (data) => console.log(data),
-    onError: (error) => console.error(error),
-  });
-  const { data: documents, mutate: mutateDocuments } = useMutationDocuments({
+  const { mutateAsync: mutateFilters, isSuccess: isSuccessFilters } =
+    useMutationFilters({
+      onSuccess: (data) => console.log(data),
+      onError: (error) => console.error(error),
+    });
+  const { mutateAsync: mutateDocuments } = useMutationDocuments({
     onSuccess: (data) => console.log(data),
     onError: (error) => console.error(error),
   });
@@ -70,18 +69,18 @@ export default function Home() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    mutateFilters(values.query);
-    if (isSuccessFilters) {
-      mutateDocuments(filters);
-    }
+    const filtersTemp = await mutateFilters(values.query);
+    const documentsTemp = await mutateDocuments(filtersTemp);
+    setFilters(filtersTemp);
+    setDocuemnts(documentsTemp);
     const results = Data.filter((item) =>
       item.title.toLowerCase().includes(values.query.toLowerCase()),
     );
     setDocs(results);
-  }
+  };
 
   return (
     <>
