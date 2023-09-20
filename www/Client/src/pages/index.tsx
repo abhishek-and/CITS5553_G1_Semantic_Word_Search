@@ -11,6 +11,7 @@ import {
   FormControl,
   FormDescription,
   FormField,
+  FormInputDate,
   FormItem,
   FormLabel,
   FormMessage,
@@ -32,6 +33,8 @@ const formSchema = z.object({
   query: z.string().min(0, {
     // message: "query must be at least 2 characters.",
   }),
+  startDate: z.any(),
+  endDate: z.any(),
 });
 
 const mockDataSchema = z.object({
@@ -51,6 +54,7 @@ export default function Home() {
   const [filters, setFilters] = useState({});
   const [documents, setDocuemnts] = useState({});
   const [values, setValue] = useState<any>();
+  const [res, sethandleResponse] = useState<any>();
 
   const { mutateAsync: mutateFilters, isSuccess: isSuccessFilters } =
     useMutationFilters({
@@ -71,14 +75,15 @@ export default function Home() {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const { startDate, endDate, query } = values;
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    const filtersTemp = await mutateFilters(values.query);
+    const filtersTemp = await mutateFilters(JSON.stringify(values));
     const documentsTemp = await mutateDocuments(filtersTemp);
     setFilters(filtersTemp);
     setDocuemnts(documentsTemp.documents);
     setValue(documentsTemp.documents);
-    console.log(documentsTemp.documents);
+    sethandleResponse(JSON.stringify(values));
     // const results = Data.filter((item) =>
     //   item.title.toLowerCase().includes(values.query.toLowerCase()),
     // );
@@ -103,48 +108,74 @@ export default function Home() {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="relative mb-4 w-full max-w-3xl"
+              className="mb-4 flex w-full items-center gap-16"
             >
-              <FormField
-                control={form.control}
-                name="query"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Enter search query</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="w-full rounded-full border border-gray-300 bg-gray-100 px-4 py-2 pr-16 text-gray-800"
-                        placeholder="CCTV from 13 Dec 2017 to 13 Jan 2019"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Image
-                src="/static/assets/close_btn.svg"
-                alt="ITC logo"
-                width={40}
-                height={40}
-                className="absolute  right-[70px] top-8"
-                onClick={() => clearList()}
-              />
-              <Button
-                className="absolute right-0 top-8 h-10 w-16 rounded-full rounded-l-none bg-blue-500 text-white"
-                type="submit"
-              >
-                Submit
-              </Button>
+              <div className="flex w-1/5 flex-col">
+                <div className="mb-4 font-semibold text-black">Filters</div>
+                <FormInputDate
+                  name="startDate"
+                  control={form.control}
+                  label="Start Date"
+                  inputFormat="DD/MM/YYYY"
+                  onChange={(date: any) => {
+                    console.log(date);
+                  }}
+                />
+                <div className="p-4"></div>
+                <FormInputDate
+                  name="endDate"
+                  control={form.control}
+                  label="End Date"
+                  inputFormat="DD/MM/YYYY"
+                  onChange={(date: any) => {
+                    console.log(date);
+                  }}
+                />
+                {/* <div className="mt-3">{res}</div> */}
+              </div>
+              <div className="relative w-2/3">
+                <FormField
+                  control={form.control}
+                  name="query"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Enter search query</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="w-full rounded-full border border-gray-300 bg-gray-100 px-4 py-2 pr-16 text-gray-800"
+                          placeholder="CCTV from 13 Dec 2017 to 13 Jan 2019"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Image
+                  src="/static/assets/close_btn.svg"
+                  alt="ITC logo"
+                  width={40}
+                  height={40}
+                  className="absolute  right-[70px] top-8"
+                  onClick={() => clearList()}
+                />
+                <Button
+                  className="absolute right-0 top-8 h-10 w-16 rounded-full rounded-l-none bg-blue-500 text-white"
+                  type="submit"
+                >
+                  Submit
+                </Button>
+              </div>
             </form>
           </Form>
+
           {/* <div>
             <pre>{JSON.stringify(filters, null, 2)}</pre>
           </div>
           <div>
             <pre>{JSON.stringify(documents, null, 2)}</pre>
           </div> */}
-          <div className="flex h-screen w-full max-w-3xl flex-col gap-4">
+          <div className="flex h-screen w-full max-w-3xl flex-col gap-4 pl-14">
             {values?.length > 0 &&
               values.map((doc: any) => (
                 <Card
