@@ -7,11 +7,16 @@ import {
   FieldPath,
   FieldValues,
   FormProvider,
+  useController,
   useFormContext,
 } from "react-hook-form";
 
 import { cn } from "~/lib/utils";
 import { Label } from "~/components/ui/label";
+
+import { DatePicker, StaticDatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const Form = FormProvider;
 
@@ -167,6 +172,56 @@ const FormMessage = React.forwardRef<
   );
 });
 FormMessage.displayName = "FormMessage";
+
+interface FormInputDateProps {
+  name: string;
+  control: any;
+  label?: string;
+  errors?: any;
+  onChange?: (value: any) => any;
+  value?: any;
+  minDate?: any;
+  maxDate?: any;
+  inputFormat?: any;
+  disabled?: boolean;
+  hideError?: boolean;
+}
+
+export const FormInputDate = ({
+  name,
+  control,
+  label,
+  errors,
+  inputFormat,
+  minDate,
+  maxDate,
+  onChange,
+  value,
+  disabled,
+  hideError,
+}: FormInputDateProps) => {
+  const { field } = useController({ name, control });
+  return (
+    <>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          {...field}
+          orientation="landscape"
+          label={label}
+          format={inputFormat}
+          minDate={minDate}
+          maxDate={maxDate}
+          value={field.value ? new Date(field.value) : null}
+          disabled={disabled}
+          onChange={(date) => {
+            field.onChange(date);
+            onChange && onChange(date);
+          }}
+        />
+      </LocalizationProvider>
+    </>
+  );
+};
 
 export {
   useFormField,
