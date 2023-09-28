@@ -74,7 +74,6 @@ export default function Home() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       query: "",
-      Range: 0,
     },
   });
 
@@ -208,7 +207,7 @@ export default function Home() {
 
                 {/* <div className="p-1"></div> */}
                 <div className="sdfsd rounded-md border border-gray-300 drop-shadow-xl">
-                  <FormLabel className="text-lg">Price Range</FormLabel>
+                  <FormLabel className="text-lg">Price Range ($)</FormLabel>
                   <div className="p-6"></div>
                   <Controller
                     name="Range"
