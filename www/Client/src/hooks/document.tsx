@@ -15,7 +15,7 @@ type QueryData = {
   documents: Document[];
 };
 type QueryVariables = {
-  query: string;
+  query: any;
   start_date: string;
   end_date: string;
 };

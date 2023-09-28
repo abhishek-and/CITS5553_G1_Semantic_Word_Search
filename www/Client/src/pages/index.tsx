@@ -30,6 +30,7 @@ import useMutationFilters from "~/hooks/filter";
 import useMutationDocuments from "~/hooks/document";
 import { Slider } from "@mui/material";
 import { Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import axios from "axios";
 
 const formSchema = z.object({
   query: z.string().min(0, {
@@ -79,19 +80,37 @@ export default function Home() {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { startDate, endDate, query } = values;
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    const filtersTemp = await mutateFilters(JSON.stringify(values));
-    const documentsTemp = await mutateDocuments(filtersTemp);
-    setFilters(filtersTemp);
-    setDocuemnts(documentsTemp.documents);
-    setValue(documentsTemp.documents);
-    sethandleResponse(JSON.stringify(values));
-    // const results = Data.filter((item) =>
-    //   item.title.toLowerCase().includes(values.query.toLowerCase()),
-    // );
-    // setDocs(results);
+    const { query, startDate, endDate, ...restOfValues } = values;
+    // console.log(query.toString());
+    // const filtersTemp = await mutateFilters(JSON.stringify(values));
+    // const documentsTemp = await mutateDocuments(filtersTemp);
+    // setFilters(filtersTemp);
+    // setDocuemnts(documentsTemp.documents);
+    // setValue(documentsTemp.documents);
+    // sethandleResponse(JSON.stringify(values));
+
+    const payload = {
+      query: JSON.stringify({ query: values.query }),
+    };
+    const { data: response } = await axios.post(
+      "http://127.0.0.1:8000/api/getFilters",
+      payload,
+    );
+    const { start_date, end_date, ...rest } = response;
+
+    const docpayload = {
+      start_date: values.startDate || start_date,
+      end_date: values.endDate || end_date,
+      ...rest,
+      ...restOfValues,
+    };
+
+    const { data: docresponse } = await axios.post(
+      "http://127.0.0.1:8000/api/getDocuments",
+      docpayload,
+    );
+    setDocuemnts(docresponse.documents);
+    setValue(docresponse.documents);
   };
 
   console.log(values);
@@ -100,7 +119,7 @@ export default function Home() {
     setValue([]);
   };
 
-  const [value, setValues] = useState<number[]>([1500, 3000]);
+  const [value, setValues] = useState<number[]>([0, 5000]);
 
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValues(newValue as number[]);
@@ -140,9 +159,9 @@ export default function Home() {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="mb-4 flex w-full items-start justify-center gap-36"
+              className="mb-4 flex w-full items-start justify-center gap-32"
             >
-              <div className="flex w-[15%] flex-col gap-6">
+              <div className="flex w-[18%] flex-col gap-6">
                 <div className="flex items-center gap-2">
                   <div className="text-3xl font-semibold text-black">
                     Filters
@@ -223,7 +242,7 @@ export default function Home() {
                         valueLabelDisplay="on"
                         getAriaValueText={valuetext}
                         step={100}
-                        min={1000}
+                        min={0}
                         max={5000}
                       />
                     )}
