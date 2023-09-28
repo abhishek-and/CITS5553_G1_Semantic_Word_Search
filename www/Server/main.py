@@ -45,12 +45,17 @@ class documentsJSON(BaseModel):
 
 @app.post("/api/getFilters")
 def get_filters(query: queryJSON):
-    return filterJSON(query=query.query, start_date="01-01-2023", end_date="31-12-2023")
+    return filterJSON(
+        query=query.query,
+        start_date="01-01-2023",
+        end_date="31-12-2023")
 
 
 @app.post("/api/getDocuments")
 def get_documents(filters: filterJSON):
     document = documentJSON(
-        documentName=filters.query, documentID="123456", similarityScore="0.98"
+        documentName=filters.query,
+        documentID="123456",
+        similarityScore="0.98"
     )
     return documentsJSON(documents=[document, document])
