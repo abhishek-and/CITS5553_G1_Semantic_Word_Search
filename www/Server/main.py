@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+
 from bert_model import process_csv_and_get_scores
 from keyphrase_transformer import extract_info
-from typing import List, Optional
 import json
+from typing import List, Optional
+
 from datetime import datetime
 
 from langchain.embeddings import SentenceTransformerEmbeddings
@@ -52,18 +54,18 @@ class filterJSON(BaseModel):
 
 
 class documentJSON(BaseModel):
-    Client_Agency: str = Field(alias="Client Agency")
-    Contract_Title: str = Field(alias="Contract Title")
-    Description: str
-    Procurement_Method: str = Field(alias="Procurement Method")
-    Reference_Number: str = Field(alias="Reference Number")
-    Revised_Contract_Value: float = Field(alias="Revised Contract Value")
-    Supplier_Name: str = Field(alias="Supplier Name")
-    Tender_Closing_Date: datetime = Field(alias="Tender Closing Date")
-    Tenders_Content: Optional[str] = Field(alias="Tenders Content")
-    Type_of_Work: str = Field(alias="Type of Work")
-    UNSPSC_Code: int = Field(alias="UNSPSC Code")
-    UNSPSC_Title: str = Field(alias="UNSPSC Title")
+    client_agency: str = Field(alias="Client Agency")
+    contract_title: str = Field(alias="Contract Title")
+    # description: str = Field(alias="Description")
+    procurement_method: str = Field(alias="Procurement Method")
+    reference_number: str = Field(alias="Reference Number")
+    revised_contract_value: float = Field(alias="Revised Contract Value")
+    supplier_name: str = Field(alias="Supplier Name")
+    tender_closing_date: datetime = Field(alias="Tender Closing Date")
+    # tenders_content: Optional[str] = Field(alias="Tenders Content")
+    type_of_work: str = Field(alias="Type of Work")
+    unspsc_code: int = Field(alias="UNSPSC Code")
+    unspsc_title: str = Field(alias="UNSPSC Title")
     similarity_score: float
 
 
@@ -116,6 +118,8 @@ def get_documents(filters: filterJSON):
             result_dict[row_id] = doc.metadata
             result_dict[row_id].pop("row")
             result_dict[row_id].pop("start_index")
+            result_dict[row_id].pop("Description")
+            result_dict[row_id].pop("Tenders Content")
         else:
             result_dict[row_id]["similarity_score"] = min(
                 result_dict[row_id]["similarity_score"], score
