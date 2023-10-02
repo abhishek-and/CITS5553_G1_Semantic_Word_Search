@@ -7,7 +7,7 @@ import pandas as pd
 from dataframe_loader import DataFrameLoader
 
 # Load file
-FILE_DIR = "../../Dataset/Contracts_Dataset_With_Extract.csv"
+FILE_DIR = "/Users/jithfernandez/Documents/Uni Notes/Semester 3/CITS5553 Capstone Project/CITS5553_G1_Semantic_Word_Search/Dataset/Contracts_Dataset_With_Extract.csv"
 df = pd.read_csv(FILE_DIR, index_col=False)
 
 # Transform NAs to empty string

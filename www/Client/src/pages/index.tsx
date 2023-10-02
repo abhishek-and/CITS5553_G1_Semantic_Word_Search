@@ -80,7 +80,8 @@ export default function Home() {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { query, startDate, endDate, ...restOfValues } = values;
+    // const { query, startDate, endDate, ...restOfValues } = values;
+    // console.log(query);
     // console.log(query.toString());
     // const filtersTemp = await mutateFilters(JSON.stringify(values));
     // const documentsTemp = await mutateDocuments(filtersTemp);
@@ -90,20 +91,29 @@ export default function Home() {
     // sethandleResponse(JSON.stringify(values));
 
     const payload = {
-      query: JSON.stringify({ query: values.query }),
+      query: values.query,
     };
     const { data: response } = await axios.post(
       "http://127.0.0.1:8000/api/getFilters",
       payload,
     );
-    const { start_date, end_date, ...rest } = response;
+    const { query, startDate, endDate, Range, UNSPSCcode, typeOfWork } =
+      response;
+    // console.log(response);
 
     const docpayload = {
-      start_date: values.startDate || start_date,
-      end_date: values.endDate || end_date,
-      ...rest,
-      ...restOfValues,
+      // query,
+      // startDate,
+      // endDate,
+      // Range,
+      // UNSPSCcode,
+      // typeOfWork,
+      query: query,
+      start_date: startDate,
+      end_date: endDate,
     };
+
+    console.log(docpayload);
 
     const { data: docresponse } = await axios.post(
       "http://127.0.0.1:8000/api/getDocuments",
