@@ -56,13 +56,13 @@ class filterJSON(BaseModel):
 class documentJSON(BaseModel):
     client_agency: str = Field(alias="Client Agency")
     contract_title: str = Field(alias="Contract Title")
-    description: str = Field(alias="Description")
+    # description: str = Field(alias="Description")
     procurement_method: str = Field(alias="Procurement Method")
     reference_number: str = Field(alias="Reference Number")
     revised_contract_value: float = Field(alias="Revised Contract Value")
     supplier_name: str = Field(alias="Supplier Name")
     tender_closing_date: datetime = Field(alias="Tender Closing Date")
-    tenders_content: Optional[str] = Field(alias="Tenders Content")
+    # tenders_content: Optional[str] = Field(alias="Tenders Content")
     type_of_work: str = Field(alias="Type of Work")
     unspsc_code: int = Field(alias="UNSPSC Code")
     unspsc_title: str = Field(alias="UNSPSC Title")
@@ -118,6 +118,8 @@ def get_documents(filters: filterJSON):
             result_dict[row_id] = doc.metadata
             result_dict[row_id].pop("row")
             result_dict[row_id].pop("start_index")
+            result_dict[row_id].pop("Description")
+            result_dict[row_id].pop("Tenders Content")
         else:
             result_dict[row_id]["similarity_score"] = min(
                 result_dict[row_id]["similarity_score"], score
