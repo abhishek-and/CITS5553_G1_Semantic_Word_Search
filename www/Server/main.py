@@ -118,8 +118,6 @@ def get_documents(filters: filterJSON):
             result_dict[row_id] = doc.metadata
             result_dict[row_id].pop("row")
             result_dict[row_id].pop("start_index")
-            result_dict[row_id].pop("Description")
-            result_dict[row_id].pop("Tenders Content")
         else:
             result_dict[row_id]["similarity_score"] = min(
                 result_dict[row_id]["similarity_score"], score
