@@ -141,7 +141,7 @@ def get_documents(filters: filterJSON):
         for item in values_list
     ]
 
-    return documentsJSON(documents=documents)
+    return documentsJSON(documents=documents[0:101])
 
 
 @app.post("/api/getSemanticScores", response_model=WordsAndScores)
