@@ -58,7 +58,15 @@ export default function Home() {
   const [docs, setDocs] = useState(docsData);
   const [filters, setFilters] = useState({});
   const [documents, setDocuemnts] = useState({});
-  const [values, setValue] = useState<any>();
+  const [values, setValue] = useState<any>([
+    {
+      id: 1,
+      contactTitle: "Consultancy Services for HR Support",
+      clientAgency: "Arts and Culture Trust",
+      reference_number: "CUAHRS202117042023AC",
+      query: "CCTV camera",
+    },
+  ]);
   const [res, sethandleResponse] = useState<any>();
 
   const { mutateAsync: mutateFilters, isSuccess: isSuccessFilters } =
@@ -120,7 +128,7 @@ export default function Home() {
       docpayload,
     );
     setDocuemnts(docresponse.documents);
-    setValue(docresponse.documents);
+    // setValue(docresponse.documents);
   };
 
   console.log(values);
@@ -154,6 +162,18 @@ export default function Home() {
 
   const test = () => {
     console.log(form.formState.errors);
+  };
+
+  const CardClickEvent = async (event: any) => {
+    console.log(event);
+    const payload = {
+      reference_number: event,
+      query: "CCTV camera",
+    };
+    const semanticScore = await axios.post(
+      "http://127.0.0.1:8000/api/getSemanticScores",
+      payload,
+    );
   };
 
   return (
@@ -301,19 +321,25 @@ export default function Home() {
                     values.map((doc: any) => (
                       <Card
                         key={doc.id}
+                        onClick={() => CardClickEvent(doc.reference_number)}
                         className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
                       >
                         <CardHeader>
-                          <CardTitle>{doc.documentName}</CardTitle>
-                          {/* <CardDescription>Card Description</CardDescription> */}
+                          <CardTitle>{doc.contactTitle}</CardTitle>
+                          <CardDescription>
+                            Client Agency: {doc.clientAgency}
+                          </CardDescription>
                         </CardHeader>
                         <CardContent>
+                          {/* <p className="text-sm text-gray-600">
+                            Client Agency: {doc.clientAgency}
+                          </p> */}
                           <p className="text-sm text-gray-600">
-                            Document ID #: {doc.documentID}
+                            Refernce Number: {doc.reference_number}
                           </p>
-                          <p className="text-sm text-gray-600">
+                          {/* <p className="text-sm text-gray-600">
                             Similarity Score: {doc.similarityScore}
-                          </p>
+                          </p> */}
                           {/* <p className="text-sm text-gray-600">
                       UNSPSC Code: {doc["UNSPSC Code"]}
                     </p> */}
