@@ -33,6 +33,8 @@ import useMutationDocuments from "~/hooks/document";
 import { Slider } from "@mui/material";
 import { Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import axios from "axios";
+import { useRouter } from "next/router";
+import { ViewDocument } from "~/components/ui/dialog";
 
 const formSchema = z.object({
   query: z.string().min(0, {
@@ -72,8 +74,10 @@ export default function Home() {
       query: "CCTV camera",
     },
   ]);
+  const router = useRouter();
   const [res, sethandleResponse] = useState<any>();
-
+  const [selectedDoc, setSelectedDocument] = useState<any>();
+  const [semanticScore, setSemanticScore] = useState<any>();
   const { mutateAsync: mutateFilters, isSuccess: isSuccessFilters } =
     useMutationFilters({
       onSuccess: (data: any) => console.log(data),
@@ -90,6 +94,29 @@ export default function Home() {
       query: "",
     },
   });
+
+  const [manageDocumentDialog, setDocumentDialog] = useState<any>({
+    open: "",
+    onclose: null,
+  });
+
+  const viewDocument = async (data: any) => {
+    setSelectedDocument(data);
+    setDocumentDialog({ open: "View" });
+    const payload = {
+      reference_number: "CUAHRS202117042023AC",
+      query: responseQuery,
+    };
+    const semanticScore = await axios.post(
+      "http://127.0.0.1:8000/api/getSemanticScores",
+      payload,
+    );
+    setSemanticScore(semanticScore);
+  };
+
+  const closeDocumentDialog = async () => {
+    setDocumentDialog({ open: null });
+  };
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -142,13 +169,11 @@ export default function Home() {
     // setValue(docresponse.documents);
   };
 
-  console.log(values);
-
   const clearList = () => {
     setValue([]);
   };
 
-  const [value, setValues] = useState<number[]>([0, 5000]);
+  const [value, setValues] = useState<number[]>([0, 5000000]);
 
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValues(newValue as number[]);
@@ -176,15 +201,18 @@ export default function Home() {
   };
 
   const CardClickEvent = async (event: any) => {
-    console.log(event);
-    const payload = {
-      reference_number: "CUAHRS202117042023AC",
-      query: responseQuery,
-    };
-    const semanticScore = await axios.post(
-      "http://127.0.0.1:8000/api/getSemanticScores",
-      payload,
+    router.push(
+      `/DetailedDocument?referenceNumber=CUAHRS202117042023AC&query=${responseQuery}`,
     );
+    console.log(event);
+    // const payload = {
+    //   reference_number: "CUAHRS202117042023AC",
+    //   query: responseQuery,
+    // };
+    // const semanticScore = await axios.post(
+    //   "http://127.0.0.1:8000/api/getSemanticScores",
+    //   payload,
+    // );
   };
 
   return (
@@ -283,9 +311,10 @@ export default function Home() {
                           }}
                           valueLabelDisplay="on"
                           getAriaValueText={valuetext}
-                          step={100}
+                          step={5000}
                           min={0}
-                          max={5000}
+                          max={5000000}
+                          valueLabelFormat={(val) => val.toLocaleString()}
                         />
                       )}
                     />
@@ -333,7 +362,8 @@ export default function Home() {
                       documents.map((doc: any) => (
                         <Card
                           key={doc.id}
-                          onClick={() => CardClickEvent(doc.reference_number)}
+                          onClick={() => viewDocument(doc)}
+                          // onClick={() => CardClickEvent(doc.reference_number)}
                           className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
                         >
                           <CardHeader>
@@ -375,16 +405,16 @@ export default function Home() {
         <Loader
           loaded={loaded}
           lines={13}
-          length={20}
-          width={10}
-          radius={30}
+          length={25}
+          width={9}
+          radius={35}
           corners={1}
           rotate={0}
           direction={1}
-          color="#000"
+          color="#3B82F6"
           speed={1}
           trail={60}
-          shadow={false}
+          shadow={true}
           hwaccel={false}
           className="spinner"
           zIndex={2e9}
@@ -394,6 +424,12 @@ export default function Home() {
           loadedClassName="loadedContent"
         />
       )}
+      <ViewDocument
+        open={manageDocumentDialog.open === "View"}
+        onClose={closeDocumentDialog}
+        documentcontent={selectedDoc}
+        semanticScoreData={semanticScore}
+      />
     </>
   );
 }
