@@ -4,6 +4,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 import pandas as pd
 
+from rich.progress import track
+
 from dataframe_loader import DataFrameLoader
 
 # Load file
@@ -14,7 +16,7 @@ df = pd.read_csv(FILE_DIR, index_col=False)
 df = df.fillna("")
 
 # Load data frame into a list of documents
-loader = DataFrameLoader(df, page_content_columns=[])
+loader = DataFrameLoader(df, page_content_columns=["Description", "Tenders Content"])
 data = loader.load()
 
 
@@ -52,7 +54,7 @@ def split_list(input_list, chunk_size):
 
 split_docs_chunked = split_list(docs, 41000)
 
-for split_docs_chunk in split_docs_chunked:
+for split_docs_chunk in track(split_docs_chunked, description="Loading..."):
     vectordb = Chroma.from_documents(
         documents=split_docs_chunk,
         embedding=embeddings,

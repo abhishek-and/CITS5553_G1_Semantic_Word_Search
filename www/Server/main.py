@@ -54,18 +54,18 @@ class filterJSON(BaseModel):
 
 
 class documentJSON(BaseModel):
-    client_agency: str = Field(alias="Client Agency")
-    contract_title: str = Field(alias="Contract Title")
-    # description: str = Field(alias="Description")
-    procurement_method: str = Field(alias="Procurement Method")
-    reference_number: str = Field(alias="Reference Number")
-    revised_contract_value: float = Field(alias="Revised Contract Value")
-    supplier_name: str = Field(alias="Supplier Name")
-    tender_closing_date: datetime = Field(alias="Tender Closing Date")
-    # tenders_content: Optional[str] = Field(alias="Tenders Content")
-    type_of_work: str = Field(alias="Type of Work")
-    unspsc_code: int = Field(alias="UNSPSC Code")
-    unspsc_title: str = Field(alias="UNSPSC Title")
+    client_agency: str
+    contract_title: str
+    # description: str
+    procurement_method: str
+    reference_number: str
+    revised_contract_value: float
+    supplier_name: str
+    tender_closing_date: datetime
+    # tenders_content: Optional[str]
+    type_of_work: str
+    unspsc_code: int
+    unspsc_title: str
     similarity_score: float
 
 
@@ -118,15 +118,28 @@ def get_documents(filters: filterJSON):
             result_dict[row_id] = doc.metadata
             result_dict[row_id].pop("row")
             result_dict[row_id].pop("start_index")
-            result_dict[row_id].pop("Description")
-            result_dict[row_id].pop("Tenders Content")
         else:
             result_dict[row_id]["similarity_score"] = min(
                 result_dict[row_id]["similarity_score"], score
             )
     values_list = list(result_dict.values())
 
-    documents = [documentJSON(**item) for item in values_list]
+    documents = [
+        documentJSON(
+            client_agency=item["Client Agency"],
+            contract_title=item["Contract Title"],
+            procurement_method=item["Procurement Method"],
+            reference_number=item["Reference Number"],
+            revised_contract_value=item["Revised Contract Value"],
+            supplier_name=item["Supplier Name"],
+            tender_closing_date=item["Tender Closing Date"],
+            type_of_work=item["Type of Work"],
+            unspsc_code=item["UNSPSC Code"],
+            unspsc_title=item["UNSPSC Title"],
+            similarity_score=item["similarity_score"],
+        )
+        for item in values_list
+    ]
 
     return documentsJSON(documents=documents)
 
