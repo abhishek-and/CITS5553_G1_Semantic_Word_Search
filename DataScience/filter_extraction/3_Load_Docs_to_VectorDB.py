@@ -15,6 +15,14 @@ df = pd.read_csv(FILE_DIR, index_col=False)
 # Transform NAs to empty string
 df = df.fillna("")
 
+# Transform date to timestamp
+df["Tender Closing Date Timestamp"] = pd.to_datetime(
+    df["Tender Closing Date"], format="%Y-%m-%d %H:%M:%S"
+)
+df["Tender Closing Date Timestamp"] = df["Tender Closing Date Timestamp"].apply(
+    lambda x: int(x.strftime("%Y%m%d%H%M%S"))
+)
+
 # Load data frame into a list of documents
 loader = DataFrameLoader(df, page_content_columns=["Description", "Tenders Content"])
 data = loader.load()
@@ -43,7 +51,9 @@ def chunk_docs(
 
 # Load documents into vector database
 docs = chunk_docs(data, 512)
-embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+embeddings = SentenceTransformerEmbeddings(
+    model_name="all-MiniLM-L6-v2", model_kwargs={"device": "mps"}
+)
 
 
 # sqlite db has a limit to the number of rows it can store at once
