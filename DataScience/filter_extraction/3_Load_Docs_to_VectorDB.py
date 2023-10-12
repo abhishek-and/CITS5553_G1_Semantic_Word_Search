@@ -6,7 +6,7 @@ import pandas as pd
 
 from rich.progress import track
 
-from dataframe_loader import DataFrameLoader
+from lib.dataframe_loader import DataFrameLoader
 
 # Load file
 FILE_DIR = "../../Dataset/Contracts_Dataset_With_Extract.csv"
