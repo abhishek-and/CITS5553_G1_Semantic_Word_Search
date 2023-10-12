@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from pydantic.dataclasses import dataclass
 
-# from bert_model import process_csv_and_get_scores
-# from keyphrase_transformer import extract_info
+from bert_model import process_csv_and_get_scores
+from keyphrase_transformer import extract_info
 import json
 from typing import List, Optional
 
@@ -51,6 +51,7 @@ class WordsAndScores(BaseModel):
     semantic_scores: list[float]
 
 
+@dataclass
 class filterJSON(BaseModel):
     query: str
     startDate: str | None = None
@@ -125,18 +126,18 @@ class FilterOutput(BaseModel):
     UNSPSCcode: List[int]
 
 
-# @app.post("/api/getFilters", response_model=FilterOutput)
-# def get_filters(query: queryJSON):
-#     extracted_data = json.loads(extract_info(query.query))
+@app.post("/api/getFilters", response_model=FilterOutput)
+def get_filters(query: queryJSON):
+    extracted_data = json.loads(extract_info(query.query))
 
-#     return FilterOutput(
-#         query=extracted_data["query"],
-#         startDate=extracted_data["startDate"],
-#         endDate=extracted_data["endDate"],
-#         Range=extracted_data["Range"],
-#         typeOfWork=extracted_data["typeOfWork"],
-#         UNSPSCcode=extracted_data["UNSPSCcode"],
-#     )
+    return FilterOutput(
+        query=extracted_data["query"],
+        startDate=extracted_data["startDate"],
+        endDate=extracted_data["endDate"],
+        Range=extracted_data["Range"],
+        typeOfWork=extracted_data["typeOfWork"],
+        UNSPSCcode=extracted_data["UNSPSCcode"],
+    )
 
 
 def format_date(date_string: str, date_format: str = "%Y-%m-%d") -> int:
@@ -204,9 +205,9 @@ def get_documents(filters: filterJSON):
     return documentsJSON(documents=documents)
 
 
-# @app.post("/api/getSemanticScores", response_model=WordsAndScores)
-# def get_semantic_scores(data: QueryData):
-#     words_list, semantic_scores = process_csv_and_get_scores(
-#         data.reference_number, data.query
-#     )
-#     return {"words": words_list, "semantic_scores": semantic_scores}
+@app.post("/api/getSemanticScores", response_model=WordsAndScores)
+def get_semantic_scores(data: QueryData):
+    words_list, semantic_scores = process_csv_and_get_scores(
+        data.reference_number, data.query
+    )
+    return {"words": words_list, "semantic_scores": semantic_scores}
