@@ -13,7 +13,6 @@ from datetime import datetime
 from langchain.embeddings import SentenceTransformerEmbeddings
 from lib.chroma import Chroma
 
-from datetime import datetime
 from chromadb.api.types import Where
 
 app = FastAPI()
@@ -163,6 +162,9 @@ def get_documents(filters: filterJSON):
     num_filtered_docs = len(db_disk.get(where=filters.get_filters())["documents"])
 
     k_filtered = int(num_filtered_docs * 0.95)
+
+    if k_filtered < 1:
+        return documentsJSON(documents=[])
 
     matching_docs = db_disk.similarity_search_by_vector_with_relevance_scores(
         query_embedding, k=k_filtered, filter=filters.get_filters()
