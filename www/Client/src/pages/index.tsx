@@ -18,19 +18,12 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
 import useMutationFilters from "~/hooks/filter";
 import useMutationDocuments from "~/hooks/document";
 import { Slider } from "@mui/material";
 import { Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import axios from "axios";
+import CardList from "~/components/cardlist";
 
 const formSchema = z.object({
   query: z.string().min(0, {
@@ -104,6 +97,8 @@ export default function Home() {
       ...rest,
       ...restOfValues,
     };
+
+    console.log(docpayload);
 
     const { data: docresponse } = await axios.post(
       "http://127.0.0.1:8000/api/getDocuments",
@@ -288,31 +283,7 @@ export default function Home() {
                 </div>
                 <div className="flex h-screen w-full max-w-3xl flex-col gap-4 pt-3">
                   {values?.length > 0 &&
-                    values.map((doc: any) => (
-                      <Card
-                        key={doc.id}
-                        className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
-                      >
-                        <CardHeader>
-                          <CardTitle>{doc.documentName}</CardTitle>
-                          {/* <CardDescription>Card Description</CardDescription> */}
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-gray-600">
-                            Document ID #: {doc.documentID}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Similarity Score: {doc.similarityScore}
-                          </p>
-                          {/* <p className="text-sm text-gray-600">
-                      UNSPSC Code: {doc["UNSPSC Code"]}
-                    </p> */}
-                        </CardContent>
-                        {/* <CardFooter>
-                    <p>Card Footer</p>
-                  </CardFooter> */}
-                      </Card>
-                    ))}
+                    values.map((doc: any) => <CardList doc={doc} />)}
                 </div>
               </div>
             </form>
