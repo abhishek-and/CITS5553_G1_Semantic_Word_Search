@@ -150,7 +150,6 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-white text-gray-900">
         <div className="flex w-full items-center justify-center p-8">
-          {/* <button onClick={test}>test</button> */}
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -168,7 +167,7 @@ export default function Home() {
                     height={30}
                   />
                 </div>
-                <div className="sdfsd rounded-md border border-gray-300 drop-shadow-xl">
+                <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                   <FormLabel className="text-lg">Type of Work</FormLabel>
                   <div className="p-1"></div>
                   <Controller
@@ -176,7 +175,6 @@ export default function Home() {
                     control={form.control}
                     name="typeOfWork"
                     render={({ field }) => {
-                      console.log(field);
                       return (
                         <RadioGroup {...field}>
                           <FormControlLabel
@@ -194,7 +192,7 @@ export default function Home() {
                     }}
                   />
                 </div>
-                <div className="sdfsd rounded-md border border-gray-300 drop-shadow-xl">
+                <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                   <FormLabel className="text-lg">Date Picker</FormLabel>
                   <div className="p-1 pb-2"></div>
                   <FormInputDate
@@ -218,9 +216,8 @@ export default function Home() {
                     }}
                   />
                 </div>
-
                 {/* <div className="p-1"></div> */}
-                <div className="sdfsd rounded-md border border-gray-300 drop-shadow-xl">
+                <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                   <FormLabel className="text-lg">Price Range ($)</FormLabel>
                   <div className="p-6"></div>
                   <Controller
@@ -271,7 +268,7 @@ export default function Home() {
                     alt="ITC logo"
                     width={40}
                     height={40}
-                    className="absolute  right-[70px] top-[2.25rem]"
+                    className="absolute right-[70px] top-[2.25rem]"
                     onClick={() => clearList()}
                   />
                   <Button
@@ -280,10 +277,12 @@ export default function Home() {
                   >
                     Submit
                   </Button>
-                </div>
-                <div className="flex h-screen w-full max-w-3xl flex-col gap-4 pt-3">
-                  {values?.length > 0 &&
-                    values.map((doc: any) => <CardList doc={doc} />)}
+                  <div className="flex h-screen w-full max-w-3xl flex-col gap-4 pt-3">
+                    {values?.length > 0 &&
+                      values.map((doc: any) => (
+                        <CardList doc={doc} key={doc.id} />
+                      ))}
+                  </div>
                 </div>
               </div>
             </form>
