@@ -146,15 +146,12 @@ export default function Home() {
     setQuery(response.query);
 
     const docpayload = {
-      // query,
-      // startDate,
-      // endDate,
-      // Range,
-      // UNSPSCcode,
-      // typeOfWork,
-      query: query,
-      start_date: startDate,
-      end_date: endDate,
+      query,
+      startDate,
+      endDate,
+      Range,
+      UNSPSCcode,
+      typeOfWork,
     };
     const { data: docresponse } = await axios.post(
       "http://127.0.0.1:8000/api/getDocuments",
