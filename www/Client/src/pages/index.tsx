@@ -243,7 +243,7 @@ export default function Home() {
                       height={30}
                     />
                   </div>
-                  <div className="sdfsd rounded-md border border-gray-300 drop-shadow-xl">
+                  <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                     <FormLabel className="text-lg">Type of Work</FormLabel>
                     <div className="p-1"></div>
                     <Controller
@@ -269,7 +269,7 @@ export default function Home() {
                       }}
                     />
                   </div>
-                  <div className="sdfsd rounded-md border border-gray-300 drop-shadow-xl">
+                  <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                     <FormLabel className="text-lg">Date Picker</FormLabel>
                     <div className="p-1 pb-2"></div>
                     <FormInputDate
@@ -295,7 +295,7 @@ export default function Home() {
                   </div>
 
                   {/* <div className="p-1"></div> */}
-                  <div className="sdfsd rounded-md border border-gray-300 drop-shadow-xl">
+                  <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                     <FormLabel className="text-lg">Price Range ($)</FormLabel>
                     <div className="p-6"></div>
                     <Controller
