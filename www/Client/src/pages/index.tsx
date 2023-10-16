@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Data from "./mock-data.json";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,6 +35,7 @@ import { Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { ViewDocument } from "~/components/ui/dialog";
+import LineChart from "~/components/chart/line";
 
 const formSchema = z.object({
   query: z.string().min(0, {
@@ -87,6 +88,15 @@ export default function Home() {
     onSuccess: (data: any) => console.log(data),
     onError: (error: any) => console.error(error),
   });
+
+  const listRef = useRef<HTMLDivElement[]>([]);
+
+  const handleClick = (id: number) => {
+    listRef.current[id]?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -226,7 +236,7 @@ export default function Home() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="mb-4 flex w-full items-start justify-center gap-32"
+                className="mb-4 flex w-full items-start justify-center gap-12"
               >
                 <div className="flex w-[18%] flex-col gap-6">
                   <div className="flex items-center gap-2">
@@ -354,45 +364,58 @@ export default function Home() {
                       Submit
                     </Button>
                   </div>
-                  <div className="flex h-screen w-full max-w-3xl flex-col gap-4 pt-3">
+                  <div className="flex w-full max-w-3xl flex-col gap-4 pt-3">
                     {documents?.length > 0 &&
-                      documents.map((doc: any) => (
-                        <Card
-                          key={doc.id}
-                          onClick={() => viewDocument(doc)}
-                          // onClick={() => CardClickEvent(doc.reference_number)}
-                          className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
+                      documents.map((doc: any, idx: any) => (
+                        <div
+                          ref={(ref: HTMLDivElement) =>
+                            (listRef.current[idx] = ref)
+                          }
                         >
-                          <CardHeader>
-                            <CardTitle>{doc.contract_title}</CardTitle>
-                            <CardDescription>
-                              Client Agency: {doc.client_agency}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            {/* <p className="text-sm text-gray-600">
+                          <Card
+                            key={doc.id}
+                            onClick={() => viewDocument(doc)}
+                            // onClick={() => CardClickEvent(doc.reference_number)}
+                            className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
+                          >
+                            <CardHeader>
+                              <CardTitle>{doc.contract_title}</CardTitle>
+                              <CardDescription>
+                                Client Agency: {doc.client_agency}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              {/* <p className="text-sm text-gray-600">
                             Client Agency: {doc.clientAgency}
                           </p> */}
-                            <p className="text-sm text-gray-600">
-                              <strong>Refernce Number:</strong>
-                              {doc.reference_number}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              <strong>Similarity Score Percentage:</strong>
-                              {((1 - doc.similarity_score) * 100).toFixed(2)}%
-                            </p>
+                              <p className="text-sm text-gray-600">
+                                <strong>Refernce Number:</strong>
+                                {doc.reference_number}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                <strong>Similarity Score Percentage:</strong>
+                                {((1 - doc.similarity_score) * 100).toFixed(2)}%
+                              </p>
 
-                            {/* <p className="text-sm text-gray-600">
+                              {/* <p className="text-sm text-gray-600">
                       UNSPSC Code: {doc["UNSPSC Code"]}
                     </p> */}
-                          </CardContent>
-                          {/* <CardFooter>
+                            </CardContent>
+                            {/* <CardFooter>
                     <p>Card Footer</p>
                   </CardFooter> */}
-                        </Card>
+                          </Card>
+                        </div>
                       ))}
                   </div>
                 </div>
+                {documents?.length > 0 && (
+                  <LineChart
+                    className="sticky top-24 z-50 mb-20 mt-10 w-2/6"
+                    data={documents}
+                    handleClick={handleClick}
+                  />
+                )}
               </form>
             </Form>
           </div>
