@@ -33,28 +33,7 @@ type CustomTooltip = LineProps["customTooltip"];
 const customTooltip: CustomTooltip = ({ payload, active }) => {
   if (!active || !payload) return null;
   return (
-    <div className="w-80 rounded-tremor-default border border-tremor-border bg-tremor-background p-2 text-tremor-default shadow-tremor-dropdown">
-      {/* {payload.map((category, idx) => (
-        <div key={idx} className="flex flex-1 space-x-2.5">
-          <div
-            className={`flex w-auto flex-col bg-${category.color}-500 rounded`}
-          />
-          <div className="space-y-1">
-            <p className="text-tremor-content">{category.dataKey}</p>
-            <p className="font-medium text-tremor-content-emphasis">
-              {category.value}
-            </p>
-            <p className="text-tremor-content">Tender Closing Date</p>
-            <p className="font-medium text-tremor-content-emphasis">
-              {category.payload.tender_closing_date}
-            </p>
-            <p className="text-tremor-content">Sentence Piece</p>
-            <p className="font-medium text-tremor-content-emphasis">
-              {category.payload.sentence_piece}
-            </p>
-          </div>
-        </div>
-      ))} */}
+    <div className="mt-64 w-80 rounded-tremor-default border border-tremor-border bg-tremor-background p-2 text-tremor-default shadow-tremor-dropdown">
       {payload.length >= 1 && (
         <div className="flex flex-1 space-x-2.5">
           <div
@@ -95,7 +74,7 @@ const LineChart = ({ data, className, handleClick }: LineChartProps) => {
         yAxisWidth={40}
         customTooltip={customTooltip}
         showAnimation
-        onValueChange={(v) => handleClick?.(v?.idx)}
+        onValueChange={(v) => handleClick?.(Number(v?.idx))}
       />
     </Card>
   );
