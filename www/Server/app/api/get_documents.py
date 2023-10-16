@@ -73,6 +73,7 @@ class documentJSON(BaseModel):
     unspsc_title: str
     similarity_score: float
     sentence_piece: str
+    row_id: str
 
 
 class documentsJSON(BaseModel):
@@ -112,7 +113,6 @@ def get_documents(filters: filterJSON):
             doc.metadata["similarity_score"] = score
             result_dict[row_id] = doc.metadata
             result_dict[row_id]["sentence_piece"] = doc.page_content
-            result_dict[row_id].pop("row")
             result_dict[row_id].pop("start_index")
         else:
             if result_dict[row_id]["similarity_score"] > score:
@@ -133,6 +133,7 @@ def get_documents(filters: filterJSON):
             unspsc_title=item["UNSPSC Title"],
             similarity_score=item["similarity_score"],
             sentence_piece=item["sentence_piece"],
+            row_id=str(item["row"]),
         )
         for item in values_list
     ]
