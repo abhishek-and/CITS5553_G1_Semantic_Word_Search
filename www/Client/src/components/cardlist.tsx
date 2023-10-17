@@ -8,7 +8,6 @@ import {
 } from "~/components/ui/card";
 
 const CardList = ({ doc }: any) => {
-  console.log(doc);
   return (
     <Card className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg">
       <CardHeader>
