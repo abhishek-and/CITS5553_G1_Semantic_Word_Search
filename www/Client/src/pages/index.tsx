@@ -111,10 +111,11 @@ export default function Home() {
   });
 
   const viewDocument = async (data: any) => {
+    console.log(data.reference_number);
     setSelectedDocument(data);
     setDocumentDialog({ open: "View" });
     const payload = {
-      reference_number: "CUAHRS202117042023AC",
+      reference_number: data.reference_number,
       query: responseQuery,
     };
     const semanticScore = await axios.post(
@@ -126,6 +127,8 @@ export default function Home() {
 
   const closeDocumentDialog = async () => {
     setDocumentDialog({ open: null });
+    setSelectedDocument([]);
+    setSemanticScore([]);
   };
 
   // 2. Define a submit handler.
