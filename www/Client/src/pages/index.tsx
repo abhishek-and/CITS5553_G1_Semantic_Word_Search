@@ -94,7 +94,7 @@ export default function Home() {
   const handleClick = (id: number) => {
     listRef.current[id]?.scrollIntoView({
       behavior: "smooth",
-      block: "center",
+      block: "start",
     });
   };
 
@@ -397,7 +397,7 @@ export default function Home() {
                               </p>
                               <p className="text-sm text-gray-600">
                                 <strong>Similarity Score Percentage:</strong>
-                                {((1 - doc.similarity_score) * 100).toFixed(2)}%
+                                {(doc.similarity_score * 100).toFixed(2)}%
                               </p>
 
                               {/* <p className="text-sm text-gray-600">
