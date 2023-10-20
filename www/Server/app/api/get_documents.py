@@ -9,20 +9,22 @@ from app.lib.chroma import Chroma
 
 from chromadb.api.types import Where
 
+from typing import Optional
+
 
 router = APIRouter()
 
 
-@dataclass
+# @dataclass
 class filterJSON(BaseModel):
     query: str
-    startDate: str | None = None
-    endDate: str | None = None
-    Range: list[int] | None = None
-    typeOfWork: str | None = None
-    UNSPSCcode: list[int] | None = None
+    startDate: Optional[str] = None
+    endDate: Optional[str] = None
+    Range: Optional[list[int]] = None
+    typeOfWork: Optional[str] = None
+    UNSPSCcode: Optional[list[int]] = None
 
-    def get_filters(self) -> Where | None:
+    def get_filters(self) -> Optional[Where]:
         filters = {"$and": []}
         if self.startDate:
             filters["$and"].append(

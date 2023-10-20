@@ -2,6 +2,8 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from app.lib.keyphrase_transformer import extract_info
 
+from typing import Optional
+
 router = APIRouter()
 
 
@@ -11,11 +13,11 @@ class queryJSON(BaseModel):
 
 class FilterOutput(BaseModel):
     query: str
-    startDate: str | None = None
-    endDate: str | None = None
-    Range: list[int] | None = None
-    typeOfWork: str | None = None
-    UNSPSCcode: list[int] | None = None
+    startDate: Optional[str] = None
+    endDate: Optional[str] = None
+    Range: Optional[list[int]] = None
+    typeOfWork: Optional[str] = None
+    UNSPSCcode: Optional[list[int]] = None
 
 
 @router.post("/api/getFilters", response_model=FilterOutput)
