@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from pydantic.dataclasses import dataclass
 
 from datetime import datetime
 
@@ -112,7 +111,7 @@ def get_documents(filters: filterJSON):
     for doc, score in matching_docs:
         row_id = doc.metadata["row"]
         if row_id not in result_dict:
-            doc.metadata["similarity_score"] = score
+            doc.metadata["similarity_score"] = 1 - score
             result_dict[row_id] = doc.metadata
             result_dict[row_id]["sentence_piece"] = doc.page_content
             result_dict[row_id].pop("start_index")
@@ -135,8 +134,8 @@ def get_documents(filters: filterJSON):
             unspsc_title=item["UNSPSC Title"],
             similarity_score=item["similarity_score"],
             sentence_piece=item["sentence_piece"],
-            row_id=str(item["row"]),
+            row_id=str(i),
         )
-        for item in values_list
+        for i, item in enumerate(values_list)
     ]
     return documentsJSON(documents=documents)
