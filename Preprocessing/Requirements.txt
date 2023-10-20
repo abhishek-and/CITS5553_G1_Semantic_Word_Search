@@ -1,0 +1,17 @@
+pip install selenium 
+
+pip install PyMuPDF 
+
+pip install python-docx 
+
+pip install spacy 
+
+pip install pandas  
+
+pip install Angchain 
+
+pip install chromadb  
+
+pip install sentence_transformers 
+
+python -m spacy download en_core_web_sm 
