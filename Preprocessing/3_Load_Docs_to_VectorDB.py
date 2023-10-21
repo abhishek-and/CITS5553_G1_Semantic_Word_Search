@@ -4,8 +4,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 import pandas as pd
 
-from rich.progress import track
-
 from lib.dataframe_loader import DataFrameLoader
 
 # Load file
@@ -51,9 +49,7 @@ def chunk_docs(
 
 # Load documents into vector database
 docs = chunk_docs(data, 512)
-embeddings = SentenceTransformerEmbeddings(
-    model_name="all-MiniLM-L6-v2", model_kwargs={"device": "mps"}
-)
+embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 
 # sqlite db has a limit to the number of rows it can store at once
@@ -64,7 +60,7 @@ def split_list(input_list, chunk_size):
 
 split_docs_chunked = split_list(docs, 41000)
 
-for split_docs_chunk in track(split_docs_chunked, description="Loading..."):
+for split_docs_chunk in split_docs_chunked:
     vectordb = Chroma.from_documents(
         documents=split_docs_chunk,
         embedding=embeddings,

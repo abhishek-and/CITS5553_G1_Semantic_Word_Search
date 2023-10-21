@@ -1,0 +1,23 @@
+pip install regex 
+
+pip install python-dateutil 
+
+pip install spacy 
+
+python -m spacy download en_core_web_sm 
+
+pip install transformers 
+
+pip install numpy 
+
+pip install torch 
+
+pip install nltk 
+
+pip install pandas
+
+pip install Angchain 
+
+pip install chromadb  
+
+pip install sentence_transformers 
