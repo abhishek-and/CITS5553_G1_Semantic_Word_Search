@@ -122,7 +122,4 @@ def extract_info(doc):
         "UNSPSCcode": [int(code) for code in codes]
     }
 
-    # Convert the dictionary to a JSON string
-    result_json = json.dumps(result_dict, indent=4)
-
-    return result_json
+    return result_dict
