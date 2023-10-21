@@ -100,7 +100,11 @@ def get_documents(filters: filterJSON):
     )
     query_embedding = embeddings.embed_query(filters.query)
     num_filtered_docs = len(db_disk.get(where=filters.get_filters())["documents"])
-    k_filtered = int(num_filtered_docs * 0.95)
+    k_filtered = (
+        int(num_filtered_docs * 0.95)
+        if filters.get_filters()
+        else int(num_filtered_docs * 0.8)
+    )
     if k_filtered < 1:
         return documentsJSON(documents=[])
 
