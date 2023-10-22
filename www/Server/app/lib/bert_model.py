@@ -32,7 +32,7 @@ def semantic_word_search(query_word, word_list, threshold=0.80):
 
     # Calculate cosine similarity between query and list of words
     cosine_scores = torch.nn.functional.cosine_similarity(
-        query_embedding, word_embeddings, dim=1
+        query_embedding, word_embeddings, dim=-1
     )
 
     # Convert cosine similarity scores to semantic scores and to normal (Python float) values
@@ -57,7 +57,8 @@ def semantic_word_search(query_word, word_list, threshold=0.80):
 
 def process_csv_and_get_scores(reference_number, query_word):
     # Read the CSV file into a DataFrame
-    file_path = "try.csv"
+    # file_path = "try.csv"
+    file_path = "Contracts_Dataset_With_Extract.csv"
     df = pd.read_csv(file_path, encoding="utf-8")
 
     # Filter the DataFrame based on the reference_number
@@ -66,7 +67,7 @@ def process_csv_and_get_scores(reference_number, query_word):
     # Concatenate text data from multiple columns into a single string
     columns_to_concat = ["Contract Title", "Description", "Tenders Content"]
     text_data = " ".join(
-        filtered_data[column].values[0] for column in columns_to_concat
+        str(filtered_data[column].values[0]) for column in columns_to_concat
     )
     text_data = text_data.lower()
 
