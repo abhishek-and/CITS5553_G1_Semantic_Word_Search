@@ -26,6 +26,9 @@ The Preprocessor component:
 
 4_Semantic_Search_Model.ipynb - A basic model attempted to detect semantically similar words within a document
 
+Extracting_keywords_date_price_using_KeyPhraseTransformer.ipynb
+- This file takes the user entered query as input and provides the tokens present in the query
+
 SentenceTransformer-paraphrase-MiniLM-L12-v2.ipynb & SentenceTransformers - all-mpnet-base-v2.ipynb
 - These 2 files were part of experimentation with models available within SentenceTransformerEmbeddings.
 
