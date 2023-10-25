@@ -26,8 +26,7 @@ The Preprocessor component:
 
 4_Semantic_Search_Model.ipynb - A basic model attempted to detect semantically similar words within a document
 
-SentenceTransformer-paraphrase-MiniLM-L12-v2.ipynb
-SentenceTransformers - all-mpnet-base-v2.ipynb
+SentenceTransformer-paraphrase-MiniLM-L12-v2.ipynb & SentenceTransformers - all-mpnet-base-v2.ipynb
 - These 2 files were part of experimentation with models available within SentenceTransformerEmbeddings.
 
 ### Prerequisites
