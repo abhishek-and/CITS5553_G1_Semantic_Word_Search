@@ -36,6 +36,9 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { ViewDocument } from "~/components/ui/dialog";
 import LineChart from "~/components/chart/line";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const formSchema = z.object({
   query: z.string().min(0, {
@@ -62,6 +65,7 @@ const docsData = mockDataArraySchema.parse(Data);
 export default function Home() {
   const [loaded, setLoaded] = useState(true);
   const [browserloader, setBrowserLoaded] = useState(true);
+  const [length, setLengthOfList] = useState(true);
   const [docs, setDocs] = useState(docsData);
   const [responseQuery, setQuery] = useState<any>();
   const [filters, setFilters] = useState({});
@@ -189,6 +193,8 @@ export default function Home() {
       docpayload,
     );
     if (docresponse.documents.length > 0) {
+      console.log(docresponse.documents.length);
+      setLengthOfList(docresponse.documents.length);
       setBrowserLoaded(true);
       setLoaded(true);
     }
@@ -297,32 +303,29 @@ export default function Home() {
                       }}
                     />
                   </div>
-                  <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
+                  {/* <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                     <FormLabel className="text-lg">Date Picker</FormLabel>
                     <div className="p-1 pb-2"></div>
-                    <FormInputDate
-                      name="startDate"
-                      control={form.control}
-                      label="Start Date"
-                      inputFormat="DD/MM/YYYY"
-                      onChange={(date: any) => {
-                        console.log(date);
-                      }}
-                    />
-                    <div className="p-3"></div>
-                    {/* <FormLabel>End Date</FormLabel> */}
-                    <FormInputDate
-                      name="endDate"
-                      control={form.control}
-                      label="End Date"
-                      inputFormat="DD/MM/YYYY"
-                      onChange={(date: any) => {
-                        console.log(date);
-                      }}
-                    />
-                  </div>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <Controller
+                        control={form.control}
+                        name="startDate"
+                        render={({ field }) => {
+                          return (
+                            <DateTimePicker
+                              label="Date"
+                              value={field.value}
+                              inputRef={field.ref}
+                              onChange={(date: any) => {
+                                field.onChange(date);
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </div> */}
 
-                  {/* <div className="p-1"></div> */}
                   <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                     <FormLabel className="text-lg">Price Range ($)</FormLabel>
                     <div className="p-6"></div>
@@ -385,7 +388,12 @@ export default function Home() {
                       Submit
                     </Button>
                   </div>
+
                   <div className="flex w-full max-w-3xl flex-col gap-4 pt-3">
+                    <div className="text-end">
+                      <span className="font-bold">{length}</span> documents
+                      found
+                    </div>
                     {documents?.length > 0 &&
                       documents.map((doc: any, idx: any) => (
                         <div
@@ -432,7 +440,7 @@ export default function Home() {
                 </div>
                 {documents?.length > 0 && (
                   <LineChart
-                    className="sticky top-24 z-50 mb-20 mt-10 w-2/6"
+                    className="sticky top-24 z-50 mb-20 mt-10 w-2/6 drop-shadow-lg"
                     data={documents}
                     handleClick={handleClick}
                   />
