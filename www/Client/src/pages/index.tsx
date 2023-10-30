@@ -132,18 +132,30 @@ export default function Home() {
   };
 
   // 2. Define a submit handler.
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: any) => {
+    const formattedStartDate = new Date(values.startDate)
+      .toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .split("/")
+      .reverse()
+      .join("-");
+
+    const formattedEndDate = new Date(values.endDate)
+      .toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .split("/")
+      .reverse()
+      .join("-");
+    console.log(formattedEndDate);
+
     setBrowserLoaded(false);
     setLoaded(false);
-    // const { query, startDate, endDate, ...restOfValues } = values;
-    // console.log(query);
-    // console.log(query.toString());
-    // const filtersTemp = await mutateFilters(JSON.stringify(values));
-    // const documentsTemp = await mutateDocuments(filtersTemp);
-    // setFilters(filtersTemp);
-    // setDocuemnts(documentsTemp.documents);
-    // setValue(documentsTemp.documents);
-    // sethandleResponse(JSON.stringify(values));
 
     const payload = {
       query: values.query,
@@ -158,10 +170,16 @@ export default function Home() {
 
     setQuery(response.query);
 
+    console.log(
+      isNaN(Date.parse(formattedStartDate)) ? startDate : formattedStartDate,
+    );
+
     const docpayload = {
       query,
-      startDate,
-      endDate,
+      startDate: isNaN(Date.parse(formattedStartDate))
+        ? startDate
+        : formattedStartDate,
+      endDate: isNaN(Date.parse(formattedEndDate)) ? endDate : formattedEndDate,
       Range,
       UNSPSCcode,
       typeOfWork,

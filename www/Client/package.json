@@ -18,7 +18,7 @@
     "@mui/icons-material": "^5.14.9",
     "@mui/lab": "5.0.0-alpha.145",
     "@mui/material": "^5.14.10",
-    "@mui/x-date-pickers": "^6.14.0",
+    "@mui/x-date-pickers": "5.0.20",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.6.0",

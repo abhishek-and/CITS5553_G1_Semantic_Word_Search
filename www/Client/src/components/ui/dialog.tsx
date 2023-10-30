@@ -66,7 +66,7 @@ export const ViewDocument = (props: any) => {
       },
       title: {
         display: true,
-        text: "Semantic Similar Score",
+        text: "Semantic Similar Word Score",
       },
     },
     scales: {
@@ -137,67 +137,75 @@ export const ViewDocument = (props: any) => {
         </DialogTitle>
 
         <DialogContent dividers={scroll === "paper"}>
-          {browserloader ? (
-            <div className="h-[30rem]">
-              <div>
-                Client Agency:{" "}
-                <span className="text-lg font-bold">
-                  {documentcontent?.client_agency}
-                </span>
-              </div>
-              <div>
-                Supplier Name:{" "}
-                <span className="text-lg font-bold">
-                  {documentcontent?.supplier_name}
-                </span>
-              </div>
-              <div>
-                Reference Number:{" "}
-                <span className="text-lg font-bold">
-                  {documentcontent?.reference_number}
-                </span>
-              </div>
-              <div className="pt-8">
-                UNSPSC Code:{" "}
-                <span className="text-lg font-bold">
-                  {documentcontent?.unspsc_code}
-                </span>
-              </div>
-              <div>
-                UNSPSC Title:{" "}
-                <span className="text-lg font-bold">
-                  {documentcontent?.unspsc_title}
-                </span>
-              </div>
-              <div>
-                <div className="flex w-full flex-col items-center justify-center pb-8 pt-6">
-                  <Bar options={options} data={data} />
+          <div className="h-[38rem]">
+            {browserloader ? (
+              <>
+                <div className="flex gap-2">
+                  <div>
+                    <div>
+                      Client Agency:{" "}
+                      <span className="text-lg font-bold">
+                        {documentcontent?.client_agency}
+                      </span>
+                    </div>
+                    <div>
+                      Supplier Name:{" "}
+                      <span className="text-lg font-bold">
+                        {documentcontent?.supplier_name}
+                      </span>
+                    </div>
+                    <div>
+                      Reference Number:{" "}
+                      <span className="text-lg font-bold">
+                        {documentcontent?.reference_number}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="pt-8">
+                      UNSPSC Code:{" "}
+                      <span className="text-lg font-bold">
+                        {documentcontent?.unspsc_code}
+                      </span>
+                    </div>
+                    <div>
+                      UNSPSC Title:{" "}
+                      <span className="text-lg font-bold">
+                        {documentcontent?.unspsc_title}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ) : (
-            <Loader
-              loaded={loaded}
-              lines={13}
-              length={25}
-              width={9}
-              radius={35}
-              corners={1}
-              rotate={0}
-              direction={1}
-              color="#3B82F6"
-              speed={1}
-              trail={60}
-              shadow={true}
-              hwaccel={false}
-              className="spinner"
-              zIndex={2e9}
-              top="50%"
-              left="50%"
-              scale={1.0}
-              loadedClassName="loadedContent"
-            />
-          )}
+                <div className="h-[25rem]">
+                  <div className="flex h-full w-full flex-col items-center justify-center pb-8 pt-6">
+                    <Bar options={options} data={data} />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <Loader
+                loaded={loaded}
+                lines={13}
+                length={25}
+                width={9}
+                radius={35}
+                corners={1}
+                rotate={0}
+                direction={1}
+                color="#3B82F6"
+                speed={1}
+                trail={60}
+                shadow={true}
+                hwaccel={false}
+                className="spinner"
+                zIndex={2e9}
+                top="50%"
+                left="50%"
+                scale={1.0}
+                loadedClassName="loadedContent"
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </React.Fragment>
