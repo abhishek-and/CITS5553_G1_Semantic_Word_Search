@@ -65,7 +65,7 @@ const docsData = mockDataArraySchema.parse(Data);
 export default function Home() {
   const [loaded, setLoaded] = useState(true);
   const [browserloader, setBrowserLoaded] = useState(true);
-  const [length, setLengthOfList] = useState(true);
+  const [length, setLengthOfList] = useState<any>(0);
   const [docs, setDocs] = useState(docsData);
   const [responseQuery, setQuery] = useState<any>();
   const [filters, setFilters] = useState({});
@@ -156,7 +156,7 @@ export default function Home() {
       .split("/")
       .reverse()
       .join("-");
-    console.log(formattedEndDate);
+    console.log(values);
 
     setBrowserLoaded(false);
     setLoaded(false);
@@ -184,9 +184,9 @@ export default function Home() {
         ? startDate
         : formattedStartDate,
       endDate: isNaN(Date.parse(formattedEndDate)) ? endDate : formattedEndDate,
-      Range,
+      Range: values.Range ? values.Range : Range,
       UNSPSCcode,
-      typeOfWork,
+      typeOfWork: values.typeOfWork ? values.typeOfWork : typeOfWork,
     };
     const { data: docresponse } = await axios.post(
       "http://127.0.0.1:8000/api/getDocuments",
@@ -389,53 +389,53 @@ export default function Home() {
                     </Button>
                   </div>
 
-                  <div className="flex w-full max-w-3xl flex-col gap-4 pt-3">
+                  <div className="flex w-full max-w-[51rem] flex-col gap-4 pt-3">
                     <div className="text-end">
-                      <span className="font-bold">{length}</span> documents
-                      found
+                      <span className="mr-2 font-bold">
+                        {length ? length : 0}
+                      </span>
+                      documents found
                     </div>
-                    {documents?.length > 0 &&
-                      documents.map((doc: any, idx: any) => (
-                        <div
-                          ref={(ref: HTMLDivElement) =>
-                            (listRef.current[idx] = ref)
-                          }
-                        >
-                          <Card
-                            key={doc.id}
-                            onClick={() => viewDocument(doc)}
-                            // onClick={() => CardClickEvent(doc.reference_number)}
-                            className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
-                          >
-                            <CardHeader>
-                              <CardTitle>{doc.contract_title}</CardTitle>
-                              <CardDescription>
-                                Client Agency: {doc.client_agency}
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              {/* <p className="text-sm text-gray-600">
-                            Client Agency: {doc.clientAgency}
-                          </p> */}
-                              <p className="text-sm text-gray-600">
-                                <strong>Refernce Number:</strong>
-                                {doc.reference_number}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <strong>Similarity Score Percentage:</strong>
-                                {(doc.similarity_score * 100).toFixed(2)}%
-                              </p>
-
-                              {/* <p className="text-sm text-gray-600">
-                      UNSPSC Code: {doc["UNSPSC Code"]}
-                    </p> */}
-                            </CardContent>
-                            {/* <CardFooter>
-                    <p>Card Footer</p>
-                  </CardFooter> */}
-                          </Card>
-                        </div>
-                      ))}
+                    {documents?.length > 0 && (
+                      <div className="set-height flex w-full flex-col gap-4 p-8">
+                        {documents?.length > 0 &&
+                          documents.map((doc: any, idx: any) => (
+                            <div
+                              ref={(ref: HTMLDivElement) =>
+                                (listRef.current[idx] = ref)
+                              }
+                            >
+                              <Card
+                                key={doc.id}
+                                onClick={() => viewDocument(doc)}
+                                className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
+                              >
+                                <CardHeader>
+                                  <CardTitle>{doc.contract_title}</CardTitle>
+                                  <CardDescription>
+                                    Client Agency: {doc.client_agency}
+                                  </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                  <p className="text-sm text-gray-600">
+                                    <strong>Refernce Number:</strong>
+                                    {doc.reference_number}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <strong>
+                                      Similarity Score Percentage:
+                                    </strong>
+                                    {(doc.similarity_score * 100).toFixed(2)}%
+                                  </p>
+                                  <p className="flex w-full items-end justify-end text-end font-medium text-slate-300">
+                                    # {idx + 1}
+                                  </p>
+                                </CardContent>
+                              </Card>
+                            </div>
+                          ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 {documents?.length > 0 && (
