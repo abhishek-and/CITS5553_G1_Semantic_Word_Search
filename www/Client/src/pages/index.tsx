@@ -36,6 +36,9 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { ViewDocument } from "~/components/ui/dialog";
 import LineChart from "~/components/chart/line";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const formSchema = z.object({
   query: z.string().min(0, {
@@ -62,6 +65,7 @@ const docsData = mockDataArraySchema.parse(Data);
 export default function Home() {
   const [loaded, setLoaded] = useState(true);
   const [browserloader, setBrowserLoaded] = useState(true);
+  const [length, setLengthOfList] = useState<any>(0);
   const [docs, setDocs] = useState(docsData);
   const [responseQuery, setQuery] = useState<any>();
   const [filters, setFilters] = useState({});
@@ -132,18 +136,30 @@ export default function Home() {
   };
 
   // 2. Define a submit handler.
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: any) => {
+    const formattedStartDate = new Date(values.startDate)
+      .toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .split("/")
+      .reverse()
+      .join("-");
+
+    const formattedEndDate = new Date(values.endDate)
+      .toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .split("/")
+      .reverse()
+      .join("-");
+    console.log(values);
+
     setBrowserLoaded(false);
     setLoaded(false);
-    // const { query, startDate, endDate, ...restOfValues } = values;
-    // console.log(query);
-    // console.log(query.toString());
-    // const filtersTemp = await mutateFilters(JSON.stringify(values));
-    // const documentsTemp = await mutateDocuments(filtersTemp);
-    // setFilters(filtersTemp);
-    // setDocuemnts(documentsTemp.documents);
-    // setValue(documentsTemp.documents);
-    // sethandleResponse(JSON.stringify(values));
 
     const payload = {
       query: values.query,
@@ -158,19 +174,27 @@ export default function Home() {
 
     setQuery(response.query);
 
+    console.log(
+      isNaN(Date.parse(formattedStartDate)) ? startDate : formattedStartDate,
+    );
+
     const docpayload = {
       query,
-      startDate,
-      endDate,
-      Range,
+      startDate: isNaN(Date.parse(formattedStartDate))
+        ? startDate
+        : formattedStartDate,
+      endDate: isNaN(Date.parse(formattedEndDate)) ? endDate : formattedEndDate,
+      Range: values.Range ? values.Range : Range,
       UNSPSCcode,
-      typeOfWork,
+      typeOfWork: values.typeOfWork ? values.typeOfWork : typeOfWork,
     };
     const { data: docresponse } = await axios.post(
       "http://127.0.0.1:8000/api/getDocuments",
       docpayload,
     );
     if (docresponse.documents.length > 0) {
+      console.log(docresponse.documents.length);
+      setLengthOfList(docresponse.documents.length);
       setBrowserLoaded(true);
       setLoaded(true);
     }
@@ -279,32 +303,29 @@ export default function Home() {
                       }}
                     />
                   </div>
-                  <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
+                  {/* <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                     <FormLabel className="text-lg">Date Picker</FormLabel>
                     <div className="p-1 pb-2"></div>
-                    <FormInputDate
-                      name="startDate"
-                      control={form.control}
-                      label="Start Date"
-                      inputFormat="DD/MM/YYYY"
-                      onChange={(date: any) => {
-                        console.log(date);
-                      }}
-                    />
-                    <div className="p-3"></div>
-                    {/* <FormLabel>End Date</FormLabel> */}
-                    <FormInputDate
-                      name="endDate"
-                      control={form.control}
-                      label="End Date"
-                      inputFormat="DD/MM/YYYY"
-                      onChange={(date: any) => {
-                        console.log(date);
-                      }}
-                    />
-                  </div>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <Controller
+                        control={form.control}
+                        name="startDate"
+                        render={({ field }) => {
+                          return (
+                            <DateTimePicker
+                              label="Date"
+                              value={field.value}
+                              inputRef={field.ref}
+                              onChange={(date: any) => {
+                                field.onChange(date);
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </div> */}
 
-                  {/* <div className="p-1"></div> */}
                   <div className="rounded-md border border-gray-300 px-4 pb-4 pt-2 drop-shadow-xl">
                     <FormLabel className="text-lg">Price Range ($)</FormLabel>
                     <div className="p-6"></div>
@@ -367,54 +388,59 @@ export default function Home() {
                       Submit
                     </Button>
                   </div>
-                  <div className="flex w-full max-w-3xl flex-col gap-4 pt-3">
-                    {documents?.length > 0 &&
-                      documents.map((doc: any, idx: any) => (
-                        <div
-                          ref={(ref: HTMLDivElement) =>
-                            (listRef.current[idx] = ref)
-                          }
-                        >
-                          <Card
-                            key={doc.id}
-                            onClick={() => viewDocument(doc)}
-                            // onClick={() => CardClickEvent(doc.reference_number)}
-                            className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
-                          >
-                            <CardHeader>
-                              <CardTitle>{doc.contract_title}</CardTitle>
-                              <CardDescription>
-                                Client Agency: {doc.client_agency}
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              {/* <p className="text-sm text-gray-600">
-                            Client Agency: {doc.clientAgency}
-                          </p> */}
-                              <p className="text-sm text-gray-600">
-                                <strong>Refernce Number:</strong>
-                                {doc.reference_number}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <strong>Similarity Score Percentage:</strong>
-                                {(doc.similarity_score * 100).toFixed(2)}%
-                              </p>
 
-                              {/* <p className="text-sm text-gray-600">
-                      UNSPSC Code: {doc["UNSPSC Code"]}
-                    </p> */}
-                            </CardContent>
-                            {/* <CardFooter>
-                    <p>Card Footer</p>
-                  </CardFooter> */}
-                          </Card>
-                        </div>
-                      ))}
+                  <div className="flex w-full max-w-[51rem] flex-col gap-4 pt-3">
+                    <div className="text-end">
+                      <span className="mr-2 font-bold">
+                        {length ? length : 0}
+                      </span>
+                      documents found
+                    </div>
+                    {documents?.length > 0 && (
+                      <div className="set-height flex w-full flex-col gap-4 p-8">
+                        {documents?.length > 0 &&
+                          documents.map((doc: any, idx: any) => (
+                            <div
+                              ref={(ref: HTMLDivElement) =>
+                                (listRef.current[idx] = ref)
+                              }
+                            >
+                              <Card
+                                key={doc.id}
+                                onClick={() => viewDocument(doc)}
+                                className="w-full transform rounded-lg border border-gray-300 bg-white shadow-md transition duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
+                              >
+                                <CardHeader>
+                                  <CardTitle>{doc.contract_title}</CardTitle>
+                                  <CardDescription>
+                                    Client Agency: {doc.client_agency}
+                                  </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                  <p className="text-sm text-gray-600">
+                                    <strong>Refernce Number:</strong>
+                                    {doc.reference_number}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <strong>
+                                      Similarity Score Percentage:
+                                    </strong>
+                                    {(doc.similarity_score * 100).toFixed(2)}%
+                                  </p>
+                                  <p className="flex w-full items-end justify-end text-end font-medium text-slate-300">
+                                    # {idx + 1}
+                                  </p>
+                                </CardContent>
+                              </Card>
+                            </div>
+                          ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 {documents?.length > 0 && (
                   <LineChart
-                    className="sticky top-24 z-50 mb-20 mt-10 w-2/6"
+                    className="sticky top-24 z-50 mb-20 mt-10 w-2/6 drop-shadow-lg"
                     data={documents}
                     handleClick={handleClick}
                   />
