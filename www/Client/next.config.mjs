@@ -10,7 +10,6 @@ const config = {
   swcMinify: true,
   experimental: {
     optimizeCss: true,
-    appDir: false,
   },
 
   /**
